@@ -7,7 +7,7 @@ import java.sql.SQLException;
 /**
  * @author jazeel
  * @since 2026-11-19
- * What this code does: 
+ * What this code does:
  * Establishes a connection to the employmentdb MySQL database.
  */
 
@@ -15,21 +15,27 @@ public class Database {
     private static final String DB_DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final String DB_CONNECTION = "jdbc:mysql://localhost:3306/employmentdb";
     private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "2629";
+    private static final String DB_PASSWORD = System.getenv("EMPLOYMENT_DB_PASSWORD");
     private Database() {
     }
     public static Connection getDBConnection() {
         Connection connection = null;
+        if (DB_PASSWORD == null || DB_PASSWORD.isBlank()) {
+            System.out.println("Database password environment variable is not set.");
+            return null;
+        }
         try {
             Class.forName(DB_DRIVER);
         } 
         catch (ClassNotFoundException ex) {
             System.out.println(ex.getMessage());
+            return null;
         }
         try {
             connection = DriverManager.getConnection( DB_CONNECTION, DB_USER, DB_PASSWORD);
             return connection;
-        } catch (SQLException ex) {
+        } 
+        catch (SQLException ex) {
             System.out.println(ex.getSQLState());
             System.out.println(ex.getMessage());
         }
